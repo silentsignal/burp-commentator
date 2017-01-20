@@ -39,16 +39,8 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory
 	}
 
 	private enum RequestResponse {
-		REQUEST {
-			byte[] getSource(IHttpRequestResponse hrr) {
-				return hrr.getRequest();
-			}
-		},
-		RESPONSE {
-			byte[] getSource(IHttpRequestResponse hrr) {
-				return hrr.getResponse();
-			}
-		};
+		REQUEST  {byte[] getSource(IHttpRequestResponse hrr) { return hrr.getRequest(); }},
+		RESPONSE {byte[] getSource(IHttpRequestResponse hrr) { return hrr.getResponse();}};
 
 		abstract byte[] getSource(IHttpRequestResponse hrr);
 
@@ -59,7 +51,8 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory
 	}
 
 	private enum RegExpFlag {
-		CASE_INSENSITIVE, MULTILINE, DOTALL, UNICODE_CASE, CANON_EQ, UNIX_LINES, LITERAL, UNICODE_CHARACTER_CLASS, COMMENTS;
+		CASE_INSENSITIVE, MULTILINE, DOTALL, UNICODE_CASE, CANON_EQ,
+		UNIX_LINES, LITERAL, UNICODE_CHARACTER_CLASS, COMMENTS;
 
 		public final int value;
 		
