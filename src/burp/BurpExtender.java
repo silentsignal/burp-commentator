@@ -73,7 +73,7 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory
 	}
 
 	private void showDialog(Frame owner, final IHttpRequestResponse[] messages) {
-		JDialog dlg = new JDialog(owner, "Commentator", true);
+		final JDialog dlg = new JDialog(owner, "Commentator", true);
 		JPanel panel = new JPanel(new GridBagLayout());
 		GridBagConstraints cs = new GridBagConstraints();
 		cs.fill = GridBagConstraints.HORIZONTAL;
@@ -82,25 +82,25 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory
 		panel.add(new JLabel("Data source: "), cs);
 
 		cs.gridx = 1;
-		JComboBox cbSource = new JComboBox(RequestResponse.values());
+		final JComboBox cbSource = new JComboBox(RequestResponse.values());
 		panel.add(cbSource, cs);
 
 		cs.gridx = 0; cs.gridy = 1;
 		panel.add(new JLabel("Regular expression: "), cs);
 
 		cs.gridx = 1;
-		JTextField tfRegExp = new JTextField();
+		final JTextField tfRegExp = new JTextField();
 		panel.add(tfRegExp, cs);
 
 		cs.gridx = 0; cs.gridy = 2; cs.gridwidth = 2;
-		JCheckBox cbOverwrite = new JCheckBox("overwrite comments on items that already have one");
+		final JCheckBox cbOverwrite = new JCheckBox("overwrite comments on items that already have one");
 		panel.add(cbOverwrite, cs);
 
 		cs.gridy = 3;
 		panel.add(new JLabel("Regular expression flags: (see JDK documentation)"), cs);
 
 		cs.gridy = 4; cs.gridwidth = 1;
-		Map<RegExpFlag, JCheckBox> cbFlags = new EnumMap<RegExpFlag, JCheckBox>(RegExpFlag.class);
+		final Map<RegExpFlag, JCheckBox> cbFlags = new EnumMap<RegExpFlag, JCheckBox>(RegExpFlag.class);
 		for (RegExpFlag flag : RegExpFlag.values()) {
 			JCheckBox cb = new JCheckBox(flag.toString());
 			panel.add(cb, cs);
