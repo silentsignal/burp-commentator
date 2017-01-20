@@ -9,6 +9,11 @@ import javax.swing.*;
 public class BurpExtender implements IBurpExtender, IContextMenuFactory
 {
 	private IExtensionHelpers helpers;
+	private final static String[] helpText = {
+		"<html><body>By clicking on <b>Apply</b> below, the selected items will have</body></html>",
+		"their comments set to the first group of the above regular",
+		"expression applied to the selected data source."
+	};
 
 	@Override
 	public void registerExtenderCallbacks(IBurpExtenderCallbacks callbacks)
@@ -114,14 +119,10 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory
 		}
 
 		cs.gridx = 0; cs.gridwidth = 2;
-		cs.gridy++;
-		panel.add(new JLabel("<html><body>By clicking on <b>Apply</b> below, the selected items will have</body></html>"), cs);
-
-		cs.gridy++;
-		panel.add(new JLabel("their comments set to the first group of the above regular"), cs);
-
-		cs.gridy++;
-		panel.add(new JLabel("expression applied to the selected data source."), cs);
+		for (String line : helpText) {
+			cs.gridy++;
+			panel.add(new JLabel(line), cs);
+		}
 
 		JButton btnApply = new JButton("Apply");
 		JButton btnCancel = new JButton("Cancel");
