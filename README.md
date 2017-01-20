@@ -14,6 +14,8 @@ popup menu, and select `Generate comment field...`.
 
 A window appears with several options:
 
+![screenshot](screenshot.png)
+
  - A regular expression can be entered in the text field, the first group
    will become the comment on the selected items.
  - The dropdown list on the top of the window determines which input the
@@ -22,6 +24,13 @@ A window appears with several options:
    on a checkbox.
  - The behavior of the regular expression engine can be fine tuned with the
    flags that Java provides (see below).
+
+As it can be seen on the example in the screenshot above the list, the
+regular expression uses the first (number 1) group after evaluation, so the
+expression must contain at least one group (delimited by parentheses).
+In regex, the 0th (also considered first by programmers) group contains the
+whole expression, hence the above clarification regarding our use of the
+first group, which is number 1, not 0.
 
 The built-in regular expression engine of the Java runtime is used, their
 interpretation of the standard, including character classes and flags can
