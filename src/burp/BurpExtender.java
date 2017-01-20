@@ -14,12 +14,13 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory
 		"their comments set to the first group of the above regular",
 		"expression applied to the selected data source."
 	};
+	private final static String NAME = "Commentator";
 
 	@Override
 	public void registerExtenderCallbacks(IBurpExtenderCallbacks callbacks)
 	{
 		helpers = callbacks.getHelpers();
-		callbacks.setExtensionName("Commentator");
+		callbacks.setExtensionName(NAME);
 		callbacks.registerContextMenuFactory(this);
 	}
 
@@ -78,7 +79,7 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory
 	}
 
 	private void showDialog(Frame owner, final IHttpRequestResponse[] messages) {
-		final JDialog dlg = new JDialog(owner, "Commentator", true);
+		final JDialog dlg = new JDialog(owner, NAME, true);
 		JPanel panel = new JPanel(new GridBagLayout());
 		GridBagConstraints cs = new GridBagConstraints();
 		cs.fill = GridBagConstraints.HORIZONTAL;
