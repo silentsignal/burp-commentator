@@ -166,6 +166,12 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory
 	}
 
 	private static Pattern handleRegexpCompilation(Component parent, String regexp, int flags) {
+		if (regexp.indexOf('(') == -1 || regexp.indexOf(')') == -1) {
+			JOptionPane.showMessageDialog(parent, "No group was found in the regular expression. " +
+					"There must be at least one group that can be used as the comment.",
+					"Missing group in regular expression", JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
 		try {
 			return Pattern.compile(regexp, flags);
 		} catch (PatternSyntaxException pse) {
