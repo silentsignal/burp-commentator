@@ -30,7 +30,7 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory
 				JMenuItem menuItem = (JMenuItem)e.getSource();
 				JPopupMenu popupMenu = (JPopupMenu) menuItem.getParent();
 				Component invoker = popupMenu.getInvoker();
-		        JComponent invokerAsJComponent = (JComponent) invoker;
+				JComponent invokerAsJComponent = (JComponent) invoker;
 				Container topLevel = invokerAsJComponent.getTopLevelAncestor();
 				showDialog((Frame)topLevel, messages);
 			}
