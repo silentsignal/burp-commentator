@@ -5,7 +5,7 @@ ScreenVersion: 1.0
 SerialVersion: 1
 MinPlatformVersion: 0
 ProOnly: False
-Author: András Veres-Szentkirályi
+Author: Andras Veres-Szentkiralyi
 ShortDescription: Generates comments for selected requests based on regular expressions.
 EntryPoint: burp-commentator.jar
 BuildCommand: ant
