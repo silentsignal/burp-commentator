@@ -1,6 +1,7 @@
 Uuid: fc5658afca9144d7b49f611aac557539
 ExtensionType: 1
 Name: Commentator
+RepoName: commentator
 ScreenVersion: 1.0
 SerialVersion: 1
 MinPlatformVersion: 0
