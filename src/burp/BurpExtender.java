@@ -42,7 +42,18 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory
 				showDialog((Frame)topLevel, messages);
 			}
 		});
-		return Collections.singletonList(i);
+		JMenuItem i2 = new JMenuItem("Generate comment field using last settings");
+		if (currentSettings == null) {
+			i2.setEnabled(false);
+		} else {
+			i2.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					generateCommentForMessages(messages);
+				}
+			});
+		}
+		return Arrays.asList(i, i2);
 	}
 
 	private enum RequestResponse {
