@@ -1,11 +1,11 @@
 Uuid: fc5658afca9144d7b49f611aac557539
 ExtensionType: 1
 Name: Commentator
-ScreenVersion: 1.0
-SerialVersion: 1
+ScreenVersion: 1.1
+SerialVersion: 2
 MinPlatformVersion: 0
 ProOnly: False
-Author: András Veres-Szentkirályi
+Author: Andras Veres-Szentkiralyi
 ShortDescription: Generates comments for selected requests based on regular expressions.
 EntryPoint: burp-commentator.jar
 BuildCommand: ant
