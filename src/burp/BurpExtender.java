@@ -79,7 +79,7 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory
 		}
 	}
 
-	private void showDialog(Frame owner, final IHttpRequestResponse[] messages) {
+	private void showDialog(final Frame owner, final IHttpRequestResponse[] messages) {
 		final JDialog dlg = new JDialog(owner, NAME, true);
 		JPanel panel = new JPanel(new GridBagLayout());
 		GridBagConstraints cs = new GridBagConstraints();
@@ -120,6 +120,16 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory
 			}
 		}
 
+		if (currentSettings != null) {
+			cbSource.setSelectedItem(currentSettings.source);
+			tfRegExp.setText(currentSettings.pattern.toString());
+			cbOverwrite.setSelected(currentSettings.overwrite);
+			int flags = currentSettings.pattern.flags();
+			for (Map.Entry<RegExpFlag, JCheckBox> e : cbFlags.entrySet()) {
+				e.getValue().setSelected((e.getKey().value & flags) != 0);
+			}
+		}
+
 		cs.gridx = 0; cs.gridwidth = 2;
 		for (String line : helpText) {
 			cs.gridy++;
@@ -127,10 +137,18 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory
 		}
 
 		JButton btnApply = new JButton("Apply");
+		JButton btnReset = new JButton("Reset");
 		JButton btnCancel = new JButton("Cancel");
 		btnCancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				dlg.dispose();
+			}
+		});
+		btnReset.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dlg.dispose();
+				currentSettings = null;
+				showDialog(owner, messages);
 			}
 		});
 		btnApply.addActionListener(new ActionListener() {
@@ -146,6 +164,7 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory
 		});
 		JPanel pnButtons = new JPanel();
 		pnButtons.add(btnApply);
+		pnButtons.add(btnReset);
 		pnButtons.add(btnCancel);
 		dlg.setLayout(new BorderLayout());
 		dlg.add(panel, BorderLayout.CENTER);
