@@ -15,6 +15,7 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory
 		"expression applied to the selected data source."
 	};
 	private final static String NAME = "Commentator";
+	private Settings currentSettings = null;
 
 	@Override
 	public void registerExtenderCallbacks(IBurpExtenderCallbacks callbacks)
@@ -138,7 +139,8 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory
 				if (p == null) return;
 				RequestResponse rr = (RequestResponse)cbSource.getSelectedItem();
 				boolean ow = cbOverwrite.isSelected();
-				generateCommentForMessages(messages, ow, rr, p);
+				currentSettings = new Settings(p, rr, ow);
+				generateCommentForMessages(messages);
 				dlg.dispose();
 			}
 		});
@@ -155,6 +157,18 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory
 		dlg.setResizable(false);
 		dlg.setLocationRelativeTo(owner);
 		dlg.setVisible(true);
+	}
+
+	private static class Settings {
+		public final Pattern pattern;
+		public final RequestResponse source;
+		public final boolean overwrite;
+
+		public Settings(Pattern pattern, RequestResponse source, boolean overwrite) {
+			this.pattern = pattern;
+			this.source = source;
+			this.overwrite = overwrite;
+		}
 	}
 
 	private static int checkBoxMapToFlags(Map<RegExpFlag, JCheckBox> cbFlags) {
@@ -181,12 +195,12 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory
 		}
 	}
 
-	private void generateCommentForMessages(IHttpRequestResponse[] messages,
-			boolean overwrite, RequestResponse source, Pattern regexp) {
+	private void generateCommentForMessages(IHttpRequestResponse[] messages) {
 		for (IHttpRequestResponse message : messages) {
 			String comment = message.getComment();
-			if (!(comment == null || comment.isEmpty() || overwrite)) continue;
-			Matcher m = regexp.matcher(helpers.bytesToString(source.getSource(message)));
+			if (!(comment == null || comment.isEmpty() || currentSettings.overwrite)) continue;
+			Matcher m = currentSettings.pattern.matcher(helpers.bytesToString(
+						currentSettings.source.getSource(message)));
 			if (m.find()) message.setComment(m.group(1));
 		}
 	}
