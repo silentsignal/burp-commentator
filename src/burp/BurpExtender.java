@@ -164,7 +164,8 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory
 		});
 		btnApply.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Pattern p = handleRegexpCompilation(dlg, tfRegExp.getText(), checkBoxMapToFlags(cbFlags));
+				Pattern p = handleRegexpCompilation(new SwingErrorHandler(dlg),
+						tfRegExp.getText(), checkBoxMapToFlags(cbFlags));
 				if (p == null) return;
 				RequestResponse rr = (RequestResponse)cbSource.getSelectedItem();
 				boolean ow = cbOverwrite.isSelected();
@@ -189,6 +190,23 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory
 		dlg.setVisible(true);
 	}
 
+	public interface ErrorHandler {
+		public void displayMessage(String message, String title);
+	}
+
+	private static class SwingErrorHandler implements ErrorHandler {
+
+		private final Component parent;
+
+		public SwingErrorHandler(Component parent) {
+			this.parent = parent;
+		}
+
+		public void displayMessage(String message, String title) {
+			JOptionPane.showMessageDialog(parent, message, title, JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
 	private static class Settings {
 		public final Pattern pattern;
 		public final RequestResponse source;
@@ -209,23 +227,22 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory
 		return flags;
 	}
 
-	private static Pattern handleRegexpCompilation(Component parent, String regexp, int flags) {
+	static Pattern handleRegexpCompilation(ErrorHandler handler, String regexp, int flags) {
 		if (regexp.indexOf('(') == -1 || regexp.indexOf(')') == -1) {
-			JOptionPane.showMessageDialog(parent, "No group was found in the regular expression. " +
+			handler.displayMessage("No group was found in the regular expression. " +
 					"There must be at least one group that can be used as the comment.",
-					"Missing group in regular expression", JOptionPane.ERROR_MESSAGE);
+					"Missing group in regular expression");
 			return null;
 		}
 		try {
 			return Pattern.compile(regexp, flags);
 		} catch (PatternSyntaxException pse) {
-			JOptionPane.showMessageDialog(parent, pse.getMessage(),
-					"Syntax error in regular expression", JOptionPane.ERROR_MESSAGE);
+			handler.displayMessage(pse.getMessage(), "Syntax error in regular expression");
 			return null;
 		}
 	}
 
-	private void generateCommentForMessages(IHttpRequestResponse[] messages) {
+	void generateCommentForMessages(IHttpRequestResponse[] messages) {
 		for (IHttpRequestResponse message : messages) {
 			String comment = message.getComment();
 			if (!(comment == null || comment.isEmpty() || currentSettings.overwrite)) continue;
