@@ -2,13 +2,15 @@ package burp;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 import javax.swing.*;
 
-public class BurpExtender implements IBurpExtender, IContextMenuFactory
+public class BurpExtender implements IBurpExtender, IContextMenuFactory, IExtensionStateListener
 {
 	private IExtensionHelpers helpers;
+	private IBurpExtenderCallbacks callbacks;
 	private final static String[] helpText = {
 		"<html><body>By clicking on <b>Apply</b> below, the selected items will have</body></html>",
 		"their comments set to the first group of the above regular",
@@ -20,9 +22,17 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory
 	@Override
 	public void registerExtenderCallbacks(IBurpExtenderCallbacks callbacks)
 	{
+		this.callbacks = callbacks;
 		helpers = callbacks.getHelpers();
 		callbacks.setExtensionName(NAME);
 		callbacks.registerContextMenuFactory(this);
+		callbacks.registerExtensionStateListener(this);
+		currentSettings = Settings.load(callbacks);
+	}
+
+	@Override
+	public void extensionUnloaded() {
+		if (currentSettings != null) currentSettings.save(callbacks);
 	}
 
 	@Override
@@ -212,10 +222,55 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory
 		public final RequestResponse source;
 		public final boolean overwrite;
 
+		private final static String EXTENSION_SETTINGS_KEY = "settings";
+
 		public Settings(Pattern pattern, RequestResponse source, boolean overwrite) {
 			this.pattern = pattern;
 			this.source = source;
 			this.overwrite = overwrite;
+		}
+
+		public static Settings load(IBurpExtenderCallbacks callbacks) {
+			String serialized = callbacks.loadExtensionSetting(EXTENSION_SETTINGS_KEY);
+			return serialized == null ? null : deserialize(
+					callbacks.getHelpers().base64Decode(serialized));
+		}
+
+		private static Settings deserialize(byte[] value) {
+			try (ByteArrayInputStream bais = new ByteArrayInputStream(value)) {
+				try (ObjectInputStream ois = new ObjectInputStream(bais)) {
+					String pattern = ois.readUTF();
+					int flags = ois.readInt();
+					RequestResponse source = RequestResponse.valueOf(ois.readUTF());
+					boolean overwrite = ois.readBoolean();
+					return new Settings(Pattern.compile(pattern, flags), source, overwrite);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+
+		public void save(IBurpExtenderCallbacks callbacks) {
+			byte[] serialized = serialize();
+			if (serialized == null) return;
+			callbacks.saveExtensionSetting(EXTENSION_SETTINGS_KEY,
+					callbacks.getHelpers().base64Encode(serialized));
+		}
+
+		private byte[] serialize() {
+			try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+				try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+					oos.writeUTF(pattern.pattern());
+					oos.writeInt(pattern.flags());
+					oos.writeUTF(source.name());
+					oos.writeBoolean(overwrite);
+				}
+				return baos.toByteArray();
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
 		}
 	}
 
