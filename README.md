@@ -46,13 +46,15 @@ scrolling, changing tabs, etc.) might be necessary.
 Building
 --------
 
-Execute `ant`, and you'll have the plugin ready in `burp-commentator.jar`
+ - (For testing) install JUnit, put the JARs into `lib`
+ - Execute `ant`, and you'll have the plugin ready in `burp-commentator.jar`
 
 Dependencies
 ------------
 
  - JDK 1.6+ (tested on OpenJDK `1.8.0_111`, Debian/Ubuntu package: `openjdk-8-jdk`)
  - Apache ANT (Debian/Ubuntu package: `ant`)
+ - JUnit 4+ (only required for testing)
 
 License
 -------
